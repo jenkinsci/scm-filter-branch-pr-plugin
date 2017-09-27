@@ -2,6 +2,7 @@
  * The MIT License
  *
  * Copyright (c) 2017, CloudBees, Inc.
+ * Copyright (c) 2017, Sam Gleske - https://github.com/samrocketman
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +23,7 @@
  * THE SOFTWARE.
  */
 
-package jenkins.scm.impl.trait;
+package net.gleske.scmfilter.impl.trait;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -30,10 +31,12 @@ import hudson.Extension;
 import java.util.regex.Pattern;
 import jenkins.scm.api.SCMHead;
 import jenkins.scm.api.SCMSource;
+import jenkins.scm.api.mixin.ChangeRequestSCMHead;
 import jenkins.scm.api.trait.SCMHeadPrefilter;
 import jenkins.scm.api.trait.SCMSourceContext;
 import jenkins.scm.api.trait.SCMSourceTrait;
 import jenkins.scm.api.trait.SCMSourceTraitDescriptor;
+import jenkins.scm.impl.trait.Selection;
 import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -96,6 +99,10 @@ public class WildcardSCMHeadFilterTrait extends SCMSourceTrait {
         context.withPrefilter(new SCMHeadPrefilter() {
             @Override
             public boolean isExcluded(@NonNull SCMSource request, @NonNull SCMHead head) {
+                if (head instanceof ChangeRequestSCMHead) {
+                    head = ((ChangeRequestSCMHead)head).getTarget();
+                }
+
                 return !Pattern.matches(getPattern(getIncludes()), head.getName())
                         || (Pattern.matches(getPattern(getExcludes()), head.getName()));
             }
