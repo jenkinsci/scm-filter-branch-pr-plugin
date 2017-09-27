@@ -137,7 +137,7 @@ public class WildcardSCMHeadFilterTrait extends SCMSourceTrait {
     /**
      * Our descriptor.
      */
-    @Symbol("headWildcardFilter")
+    @Symbol("headWildcardFilterWithPR")
     @Extension
     @Selection
     public static class DescriptorImpl extends SCMSourceTraitDescriptor {

@@ -119,7 +119,7 @@ public class RegexSCMHeadFilterTrait extends SCMSourceTrait {
     /**
      * Our descriptor.
      */
-    @Symbol("headRegexFilter")
+    @Symbol("headRegexFilterWithPR")
     @Extension
     @Selection
     public static class DescriptorImpl extends SCMSourceTraitDescriptor {
