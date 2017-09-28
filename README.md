@@ -1,4 +1,6 @@
-# scm-branch-pr-filter-plugin
+# SCM Branch PR Filter Plugin
+
+This is a Jenkins plugin.
 
 This plugin will filter branches in the [Pipeline Multibranch
 Plugin][pmb-plugin] similar to the [SCM API Plugin][sa-plugin].  However, pull
