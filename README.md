@@ -1,4 +1,4 @@
-# SCM Branch PR Filter Plugin
+# SCM Filter Branch PR Plugin
 
 This is a Jenkins plugin.
 
@@ -14,7 +14,7 @@ this plugin.
 This plugin was created to address [JENKINS-47091][JENKINS-47091] where
 [Pipeline Multibranch Plugin][pmb-plugin] does not build GitHub pull requests
 destined for a filtered branch.  For documentation on how to configure this
-plugin refer to the wiki article [SCM Branch PR Filter Plugin][wiki].
+plugin refer to the wiki article [SCM Filter Branch PR Plugin][wiki].
 
 # Release Notes
 
