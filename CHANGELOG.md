@@ -1,4 +1,4 @@
-# 0.2 Rename release
+# 0.2 Rename release (Oct 7th, 2017)
 
 - Rename plugin from `scm-branch-pr-filter-plugin` to
   `scm-filter-branch-pr-plugin`.
