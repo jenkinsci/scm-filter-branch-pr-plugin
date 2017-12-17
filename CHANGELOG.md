@@ -1,3 +1,8 @@
+# 0.3 Rename release
+
+- Rename the pom project name.  This fixes the name in the Jenkins Update
+  Center.
+
 # 0.2 Rename release (Oct 7th, 2017)
 
 - Rename plugin from `scm-branch-pr-filter-plugin` to
