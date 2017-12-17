@@ -13,7 +13,7 @@
     <version>0.3-SNAPSHOT</version>
     <packaging>hpi</packaging>
 
-    <name>SCM Branch PR Filter Plugin</name>
+    <name>SCM Filter Branch PR Plugin</name>
     <description>This plugin provides wildcard and regex filters for Pipeline Multibranch Plugin pipelines.  It will match branches and pull requests destined for the matched branches.</description>
     <url>https://wiki.jenkins.io/display/JENKINS/SCM+Filter+Branch+PR+Plugin</url>
     <licenses>
