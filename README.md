@@ -1,4 +1,4 @@
-# SCM Filter Branch PR Plugin
+# SCM Filter Branch PR Plugin [![Build # Status][build-icon]][build-link]
 
 This is a Jenkins plugin.
 
@@ -32,6 +32,8 @@ Copyright (c) 2017, CloudBees, Inc.
 See [LICENSE.txt](LICENSE.txt)
 
 [JENKINS-47091]: https://issues.jenkins-ci.org/browse/JENKINS-47091
+[build-icon]: https://ci.jenkins.io/buildStatus/icon?job=Plugins/scm-filter-branch-pr-plugin/master
+[build-link]: https://ci.jenkins.io/job/Plugins/job/scm-filter-branch-pr-plugin/job/master/
 [jira]: https://issues.jenkins-ci.org/issues/?jql=project%20%3D%20JENKINS%20AND%20component%20%3D%20scm-filter-branch-pr-plugin
 [pmb-plugin]: https://wiki.jenkins.io/display/JENKINS/Pipeline+Multibranch+Plugin
 [sa-plugin]: https://wiki.jenkins.io/display/JENKINS/SCM+API+Plugin
