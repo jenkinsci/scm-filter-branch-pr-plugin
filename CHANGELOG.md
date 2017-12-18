@@ -1,4 +1,4 @@
-# 0.3 Rename release
+# 0.3 Rename release (Dec 17th, 2017)
 
 - Rename the pom project name.  This fixes the name in the Jenkins Update
   Center.
