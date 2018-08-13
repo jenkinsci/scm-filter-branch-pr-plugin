@@ -1,7 +1,7 @@
 <!--
  ~ The MIT License
  ~
- ~ Copyright (c) 2017, CloudBees, Inc.
+ ~ Copyright (c) 2017-2018, Sam Gleske - https://github.com/samrocketman
  ~
  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
  ~ of this software and associated documentation files (the "Software"), to deal
@@ -21,12 +21,7 @@
  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  ~ THE SOFTWARE.
  -->
-<?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-  <f:entry title="${%Branch regular expression}" field="regex">
-    <f:textbox default=".*"/>
-  </f:entry>
-  <f:entry title="${%Tag regular expression}" field="tagRegex">
-    <f:textbox default="(?!.*)"/>
-  </f:entry>
-</j:jelly>
+<div>
+    A <a href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html">Java regular expression</a> to
+    restrict the names. Names for tags that do not match the supplied regular expression will be ignored.
+</div>

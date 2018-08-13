@@ -34,6 +34,7 @@ import java.util.regex.PatternSyntaxException;
 import jenkins.scm.api.SCMHead;
 import jenkins.scm.api.SCMSource;
 import jenkins.scm.api.mixin.ChangeRequestSCMHead;
+import jenkins.scm.api.mixin.TagSCMHead;
 import jenkins.scm.api.trait.SCMHeadPrefilter;
 import jenkins.scm.api.trait.SCMSourceContext;
 import jenkins.scm.api.trait.SCMSourceTrait;
@@ -54,31 +55,60 @@ import org.kohsuke.stapler.QueryParameter;
 public class RegexSCMHeadFilterTrait extends SCMSourceTrait {
 
     /**
-     * The regular expression.
+     * The branch regular expression.
      */
     @NonNull
     private final String regex;
+
     /**
-     * The compiled {@link Pattern}.
+     * The tag regular expression.
+     */
+    @NonNull
+    private final String tagRegex;
+
+    /**
+     * The compiled branch {@link Pattern}.
      */
     @CheckForNull
     private transient Pattern pattern;
 
     /**
+     * The compiled tag {@link Pattern}.
+     */
+    @CheckForNull
+    private transient Pattern tagPattern;
+
+    /**
      * Stapler constructor.
      *
-     * @param regex the regular expression.
+     * @param regex the branch regular expression.
+     * @param tagRegex the tag regular expression.
      */
     @DataBoundConstructor
-    public RegexSCMHeadFilterTrait(@NonNull String regex) {
+    public RegexSCMHeadFilterTrait(@NonNull String regex, @NonNull String tagRegex) {
         pattern = Pattern.compile(regex);
         this.regex = regex;
+        tagPattern = Pattern.compile(tagRegex);
+        this.tagRegex = tagRegex;
     }
 
     /**
-     * Gets the regular expression.
+     * Deprecated constructor kept around for compatibility and migration.
      *
-     * @return the regular expression.
+     * @param regex the regular expression.
+     */
+    @Deprecated
+    public RegexSCMHeadFilterTrait(@NonNull String regex) {
+        pattern = Pattern.compile(regex);
+        this.regex = regex;
+        tagPattern = Pattern.compile("(?!.*)");
+        this.tagRegex = "(?!.*)";
+    }
+
+    /**
+     * Gets the branch regular expression.
+     *
+     * @return the branch regular expression.
      */
     @NonNull
     public String getRegex() {
@@ -86,9 +116,19 @@ public class RegexSCMHeadFilterTrait extends SCMSourceTrait {
     }
 
     /**
-     * Gets the compiled {@link Pattern}.
+     * Gets the tag regular expression.
      *
-     * @return the compiled {@link Pattern}.
+     * @return the tag regular expression.
+     */
+    @NonNull
+    public String getTagRegex() {
+        return tagRegex;
+    }
+
+    /**
+     * Gets the compiled branch {@link Pattern}.
+     *
+     * @return the compiled branch {@link Pattern}.
      */
     @NonNull
     private Pattern getPattern() {
@@ -97,6 +137,20 @@ public class RegexSCMHeadFilterTrait extends SCMSourceTrait {
             pattern = Pattern.compile(regex);
         }
         return pattern;
+    }
+
+    /**
+     * Gets the compiled tag {@link Pattern}.
+     *
+     * @return the compiled tag {@link Pattern}.
+     */
+    @NonNull
+    private Pattern getTagPattern() {
+        if (tagPattern == null) {
+            // idempotent
+            tagPattern = Pattern.compile(tagRegex);
+        }
+        return tagPattern;
     }
 
     /**
@@ -111,7 +165,11 @@ public class RegexSCMHeadFilterTrait extends SCMSourceTrait {
                     head = ((ChangeRequestSCMHead)head).getTarget();
                 }
 
-                return !getPattern().matcher(head.getName()).matches();
+                if (head instanceof TagSCMHead) {
+                    return !getTagPattern().matcher(head.getName()).matches();
+                } else {
+                    return !getPattern().matcher(head.getName()).matches();
+                }
             }
         });
     }
