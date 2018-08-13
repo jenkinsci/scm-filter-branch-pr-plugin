@@ -1,7 +1,7 @@
 <!--
  ~ The MIT License
  ~
- ~ Copyright (c) 2017, CloudBees, Inc.
+ ~ Copyright (c) 2017-2018, Sam Gleske - https://github.com/samrocketman
  ~
  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
  ~ of this software and associated documentation files (the "Software"), to deal
@@ -21,18 +21,8 @@
  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  ~ THE SOFTWARE.
  -->
-<?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
-  <f:entry title="${%Branch Include}" field="includes">
-    <f:textbox default="*"/>
-  </f:entry>
-  <f:entry title="${%Branch Exclude}" field="excludes">
-    <f:textbox default=""/>
-  </f:entry>
-  <f:entry title="${%Tag Include}" field="tagIncludes">
-    <f:textbox default=""/>
-  </f:entry>
-  <f:entry title="${%Tag Exclude}" field="tagExcludes">
-    <f:textbox default="*"/>
-  </f:entry>
-</j:jelly>
+<div>
+    Space-separated list of tag name patterns to consider.
+    You may use <code>*</code> as a wildcard; for example: <code>*-1.*</code>
+    to build only 1.0 tags from the maven release plugin.
+</div>

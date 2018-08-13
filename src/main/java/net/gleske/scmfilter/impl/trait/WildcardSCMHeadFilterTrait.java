@@ -2,7 +2,7 @@
  * The MIT License
  *
  * Copyright (c) 2017, CloudBees, Inc.
- * Copyright (c) 2017, Sam Gleske - https://github.com/samrocketman
+ * Copyright (c) 2017-2018, Sam Gleske - https://github.com/samrocketman
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import jenkins.scm.api.SCMHead;
 import jenkins.scm.api.SCMSource;
 import jenkins.scm.api.mixin.ChangeRequestSCMHead;
+import jenkins.scm.api.mixin.TagSCMHead;
 import jenkins.scm.api.trait.SCMHeadPrefilter;
 import jenkins.scm.api.trait.SCMSourceContext;
 import jenkins.scm.api.trait.SCMSourceTrait;
@@ -50,45 +51,93 @@ import org.kohsuke.stapler.DataBoundConstructor;
 public class WildcardSCMHeadFilterTrait extends SCMSourceTrait {
 
     /**
-     * The include rules.
+     * The branch include rules.
      */
     @NonNull
     private final String includes;
 
     /**
-     * The exclude rules.
+     * The branch exclude rules.
      */
     @NonNull
     private final String excludes;
 
     /**
+     * The tag include rules.
+     */
+    @NonNull
+    private final String tagIncludes;
+
+    /**
+     * The tag exclude rules.
+     */
+    @NonNull
+    private final String tagExcludes;
+
+    /**
      * Stapler constructor.
+     *
+     * @param includes the branch include rules.
+     * @param excludes the branch exclude rules.
+     * @param tagIncludes the tag include rules.
+     * @param tagExcludes the tag exclude rules.
+     */
+    @DataBoundConstructor
+    public WildcardSCMHeadFilterTrait(@CheckForNull String includes, String excludes, String tagIncludes, String tagExcludes) {
+        this.includes = StringUtils.defaultIfBlank(includes, "*");
+        this.excludes = StringUtils.defaultIfBlank(excludes, "");
+        this.tagIncludes = StringUtils.defaultIfBlank(tagIncludes, "");
+        this.tagExcludes = StringUtils.defaultIfBlank(tagExcludes, "");
+    }
+
+    /**
+     * Deprecated constructor kept around for compatibility and migration.
      *
      * @param includes the include rules.
      * @param excludes the exclude rules.
      */
-    @DataBoundConstructor
+    @Deprecated
     public WildcardSCMHeadFilterTrait(@CheckForNull String includes, String excludes) {
         this.includes = StringUtils.defaultIfBlank(includes, "*");
         this.excludes = StringUtils.defaultIfBlank(excludes, "");
+        this.tagIncludes = "";
+        this.tagExcludes = "*";
     }
 
     /**
-     * Returns the include rules.
+     * Returns the branch include rules.
      *
-     * @return the include rules.
+     * @return the branch include rules.
      */
     public String getIncludes() {
         return includes;
     }
 
     /**
-     * Returns the exclude rules.
+     * Returns the branch exclude rules.
      *
-     * @return the exclude rules.
+     * @return the branch exclude rules.
      */
     public String getExcludes() {
         return excludes;
+    }
+
+    /**
+     * Returns the tag include rules.
+     *
+     * @return the tag include rules.
+     */
+    public String getTagIncludes() {
+        return tagIncludes;
+    }
+
+    /**
+     * Returns the tag exclude rules.
+     *
+     * @return the tag exclude rules.
+     */
+    public String getTagExcludes() {
+        return tagExcludes;
     }
 
     /**
@@ -103,8 +152,13 @@ public class WildcardSCMHeadFilterTrait extends SCMSourceTrait {
                     head = ((ChangeRequestSCMHead)head).getTarget();
                 }
 
-                return !Pattern.matches(getPattern(getIncludes()), head.getName())
-                        || (Pattern.matches(getPattern(getExcludes()), head.getName()));
+                if(head instanceof TagSCMHead) {
+                    return !Pattern.matches(getPattern(getTagIncludes()), head.getName())
+                         || Pattern.matches(getPattern(getTagExcludes()), head.getName());
+                } else {
+                    return !Pattern.matches(getPattern(getIncludes()), head.getName())
+                         || Pattern.matches(getPattern(getExcludes()), head.getName());
+                }
             }
         });
     }
