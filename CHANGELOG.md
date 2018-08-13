@@ -1,3 +1,8 @@
+# 0.4 Release (Aug 12th, 2018)
+
+- Add support for filtering for tags.  This adds the ability to have a tag based
+  workflow using the multibranch pipeline plugin.
+
 # 0.3 Rename release (Dec 17th, 2017)
 
 - Rename the pom project name.  This fixes the name in the Jenkins Update
