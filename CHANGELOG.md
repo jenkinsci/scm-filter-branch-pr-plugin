@@ -1,6 +1,8 @@
-# 0.6
+# 0.5.1 (Jan 25th, 2020)
 
+- No code changes.
 - Migrated documentation from Jenkins wiki to GitHub README.
+- Updated GitHub documentation to reflect latest plugin features.
 
 # 0.5 (Jan 25th, 2020)
 
