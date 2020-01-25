@@ -50,7 +50,7 @@ import org.kohsuke.stapler.QueryParameter;
  * Decorates a {@link SCMSource} with a {@link SCMHeadPrefilter} that excludes {@link SCMHead} instances with names that
  * do not match a user supplied regular expression.
  *
- * @since 2.2.0
+ * @since 0.1
  */
 public class RegexSCMHeadFilterTrait extends SCMSourceTrait {
 

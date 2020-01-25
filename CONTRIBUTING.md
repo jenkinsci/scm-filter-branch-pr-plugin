@@ -12,9 +12,9 @@ Truths which we believe to be self-evident (adapted from
    dangerous functionality to them.
 3. **If it's "like PGP," it's wrong.** PGP is our guide for what not to do.
 4. **It's an asynchronous world.** We wary of anything that is
-   anti-asynchronous: ACKs, protocol confirmations, or anly protocol-level
+   anti-asynchronous: ACKs, protocol confirmations, or any protocol-level
    "advisory" message.
-5. **There is no such thing as time**. Protocol ideas that require synchonized
+5. **There is no such thing as time**. Protocol ideas that require synchronized
    clocks are doomed to failure.
 
 # Code Style Guidelines
@@ -47,8 +47,8 @@ Truths which we believe to be self-evident (adapted from
    `ALL_CAPS_WITH_UNDERSCORES`.
 3. Start variable names with a lowercase letter and use camelCase rather than
    under\_scores.
-4. Spelling and abreviations: If the word is widely used in the JVM runtime,
-   stick with the spelling/abreviation in the JVM runtime, e.g. `color` over
+4. Spelling and abbreviations: If the word is widely used in the JVM runtime,
+   stick with the spelling/abbreviation in the JVM runtime, e.g. `color` over
    `colour`, `sync` over `synch`, `async` over `asynch`, etc.
 5. It is acceptable to use `i`, `j`, `k` for loop indices and iterators. If you
    need more than three, you are likely doing something wrong and as such you
@@ -141,7 +141,7 @@ exceed 120 characters.
     @Override
     ```
 
-* Getters and Setters shall have a Javadoc comment. The following is prefered
+* Getters and Setters shall have a Javadoc comment. The following is preferred
 
     ```java
     /**
@@ -190,7 +190,7 @@ exceed 120 characters.
         + Indent case statements in switch
     - Wrapping
         + Change all the `Never` values to `If Long`
-        + Select the checkbox for Wrap After Assignement Operators
+        + Select the checkbox for Wrap After Assignment Operators
 * IntelliJ, by and large the IDE defaults are acceptable with the following
   changes:
     - Wrapping and Braces
