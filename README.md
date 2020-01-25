@@ -23,7 +23,7 @@ filters:
 Choose only one filter.  The filter will match branches and tags to be built.
 It will also match any pull request destination branch that matches a filtered
 branch to also be built as a pull request by the [Pipeline Multibranch
-Plugin][multibranch-pipline] job.
+Plugin][multibranch-pipeline] job.
 
 # Configuring tag building
 
@@ -168,7 +168,7 @@ pipeline {
 ```
 
 [declarative-when]: https://jenkins.io/doc/book/pipeline/syntax/#when
-[multibranch-pipline]: https://wiki.jenkins.io/display/JENKINS/Pipeline+Multibranch+Plugin
+[multibranch-pipeline]: https://wiki.jenkins.io/display/JENKINS/Pipeline+Multibranch+Plugin
 [screenshot-config]: https://github.com/jenkinsci/scm-filter-branch-pr-plugin/raw/master/docs/images/screenshot-config.png
 [screenshot-regex]: https://github.com/jenkinsci/scm-filter-branch-pr-plugin/raw/master/docs/images/screenshot-regex.png
 [screenshot-wildcards]: https://github.com/jenkinsci/scm-filter-branch-pr-plugin/raw/master/docs/images/screenshot-wildcards.png
