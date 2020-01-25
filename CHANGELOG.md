@@ -1,4 +1,4 @@
-# 0.5
+# 0.5 (Jan 25th, 2020)
 
 - Add support for filtering tags and branches plus if they're pull requests from
   a specific origin rather than to a target.
