@@ -2,7 +2,7 @@
  * The MIT License
  *
  * Copyright (c) 2017, CloudBees, Inc.
- * Copyright (c) 2017, Sam Gleske - https://github.com/samrocketman
+ * Copyright (c) 2017-2020, Sam Gleske - https://github.com/samrocketman
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import jenkins.scm.api.SCMHead;
 import jenkins.scm.api.SCMSource;
+import jenkins.scm.api.mixin.ChangeRequestSCMHead2;
 import jenkins.scm.api.mixin.ChangeRequestSCMHead;
 import jenkins.scm.api.mixin.TagSCMHead;
 import jenkins.scm.api.trait.SCMHeadPrefilter;
@@ -50,9 +51,9 @@ import org.kohsuke.stapler.QueryParameter;
  * Decorates a {@link SCMSource} with a {@link SCMHeadPrefilter} that excludes {@link SCMHead} instances with names that
  * do not match a user supplied regular expression.
  *
- * @since 2.2.0
+ * @since 0.5
  */
-public class RegexSCMHeadFilterTrait extends SCMSourceTrait {
+public class RegexSCMOriginFilterTrait extends SCMSourceTrait {
 
     /**
      * The branch regular expression.
@@ -85,7 +86,7 @@ public class RegexSCMHeadFilterTrait extends SCMSourceTrait {
      * @param tagRegex the tag regular expression.
      */
     @DataBoundConstructor
-    public RegexSCMHeadFilterTrait(@NonNull String regex, @NonNull String tagRegex) {
+    public RegexSCMOriginFilterTrait(@NonNull String regex, @NonNull String tagRegex) {
         pattern = Pattern.compile(regex);
         this.regex = regex;
         tagPattern = Pattern.compile(tagRegex);
@@ -98,7 +99,7 @@ public class RegexSCMHeadFilterTrait extends SCMSourceTrait {
      * @param regex the regular expression.
      */
     @Deprecated
-    public RegexSCMHeadFilterTrait(@NonNull String regex) {
+    public RegexSCMOriginFilterTrait(@NonNull String regex) {
         pattern = Pattern.compile(regex);
         this.regex = regex;
         tagPattern = Pattern.compile("(?!.*)");
@@ -161,13 +162,17 @@ public class RegexSCMHeadFilterTrait extends SCMSourceTrait {
         context.withPrefilter(new SCMHeadPrefilter() {
             @Override
             public boolean isExcluded(@NonNull SCMSource source, @NonNull SCMHead head) {
-                if (head instanceof ChangeRequestSCMHead) {
-                    head = ((ChangeRequestSCMHead)head).getTarget();
+                if (head instanceof ChangeRequestSCMHead2) {
+                    // change request
+                    String origin = ((ChangeRequestSCMHead2)head).getOriginName();
+                    return !getPattern().matcher(origin).matches();
                 }
 
                 if (head instanceof TagSCMHead) {
+                    // tag
                     return !getTagPattern().matcher(head.getName()).matches();
                 } else {
+                    // branch
                     return !getPattern().matcher(head.getName()).matches();
                 }
             }
@@ -177,7 +182,7 @@ public class RegexSCMHeadFilterTrait extends SCMSourceTrait {
     /**
      * Our descriptor.
      */
-    @Symbol("headRegexFilterWithPR")
+    @Symbol("headRegexFilterWithPRFromOrigin")
     @Extension
     @Selection
     public static class DescriptorImpl extends SCMSourceTraitDescriptor {
@@ -187,7 +192,7 @@ public class RegexSCMHeadFilterTrait extends SCMSourceTrait {
          */
         @Override
         public String getDisplayName() {
-            return Messages.RegexSCMHeadFilterTrait_DisplayName();
+            return Messages.RegexSCMOriginFilterTrait_DisplayName();
         }
 
         /**

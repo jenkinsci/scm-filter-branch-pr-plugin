@@ -1,3 +1,8 @@
+# 0.5
+
+- Add support for filtering tags and branches plus if they're pull requests from
+  a specific origin rather than to a target.
+
 # 0.4 Release (Aug 12th, 2018)
 
 - Add support for filtering for tags.  This adds the ability to have a tag based

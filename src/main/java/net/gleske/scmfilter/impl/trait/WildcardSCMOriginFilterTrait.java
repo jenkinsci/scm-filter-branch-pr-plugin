@@ -2,7 +2,7 @@
  * The MIT License
  *
  * Copyright (c) 2017, CloudBees, Inc.
- * Copyright (c) 2017-2018, Sam Gleske - https://github.com/samrocketman
+ * Copyright (c) 2017-2020, Sam Gleske - https://github.com/samrocketman
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,7 @@ import hudson.Extension;
 import java.util.regex.Pattern;
 import jenkins.scm.api.SCMHead;
 import jenkins.scm.api.SCMSource;
+import jenkins.scm.api.mixin.ChangeRequestSCMHead2;
 import jenkins.scm.api.mixin.ChangeRequestSCMHead;
 import jenkins.scm.api.mixin.TagSCMHead;
 import jenkins.scm.api.trait.SCMHeadPrefilter;
@@ -46,9 +47,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * Decorates a {@link SCMSource} with a {@link SCMHeadPrefilter} that filters {@link SCMHead} instances based on
  * matching wildcard include/exclude rules.
  *
- * @since 2.2.0
+ * @since 0.5
  */
-public class WildcardSCMHeadFilterTrait extends SCMSourceTrait {
+public class WildcardSCMOriginFilterTrait extends SCMSourceTrait {
 
     /**
      * The branch include rules.
@@ -83,7 +84,7 @@ public class WildcardSCMHeadFilterTrait extends SCMSourceTrait {
      * @param tagExcludes the tag exclude rules.
      */
     @DataBoundConstructor
-    public WildcardSCMHeadFilterTrait(@CheckForNull String includes, String excludes, String tagIncludes, String tagExcludes) {
+    public WildcardSCMOriginFilterTrait(@CheckForNull String includes, String excludes, String tagIncludes, String tagExcludes) {
         this.includes = StringUtils.defaultIfBlank(includes, "*");
         this.excludes = StringUtils.defaultIfBlank(excludes, "");
         this.tagIncludes = StringUtils.defaultIfBlank(tagIncludes, "");
@@ -97,7 +98,7 @@ public class WildcardSCMHeadFilterTrait extends SCMSourceTrait {
      * @param excludes the exclude rules.
      */
     @Deprecated
-    public WildcardSCMHeadFilterTrait(@CheckForNull String includes, String excludes) {
+    public WildcardSCMOriginFilterTrait(@CheckForNull String includes, String excludes) {
         this.includes = StringUtils.defaultIfBlank(includes, "*");
         this.excludes = StringUtils.defaultIfBlank(excludes, "");
         this.tagIncludes = "";
@@ -148,14 +149,19 @@ public class WildcardSCMHeadFilterTrait extends SCMSourceTrait {
         context.withPrefilter(new SCMHeadPrefilter() {
             @Override
             public boolean isExcluded(@NonNull SCMSource request, @NonNull SCMHead head) {
-                if (head instanceof ChangeRequestSCMHead) {
-                    head = ((ChangeRequestSCMHead)head).getTarget();
+                if (head instanceof ChangeRequestSCMHead2) {
+                    // change request
+                    String origin = ((ChangeRequestSCMHead2)head).getOriginName();
+                    return !Pattern.matches(getPattern(getIncludes()), origin)
+                         || Pattern.matches(getPattern(getExcludes()), origin);
                 }
 
                 if(head instanceof TagSCMHead) {
+                    // tag
                     return !Pattern.matches(getPattern(getTagIncludes()), head.getName())
                          || Pattern.matches(getPattern(getTagExcludes()), head.getName());
                 } else {
+                    // branch
                     return !Pattern.matches(getPattern(getIncludes()), head.getName())
                          || Pattern.matches(getPattern(getExcludes()), head.getName());
                 }
@@ -191,7 +197,7 @@ public class WildcardSCMHeadFilterTrait extends SCMSourceTrait {
     /**
      * Our descriptor.
      */
-    @Symbol("headWildcardFilterWithPR")
+    @Symbol("headWildcardFilterWithPRFromOrigin")
     @Extension
     @Selection
     public static class DescriptorImpl extends SCMSourceTraitDescriptor {
@@ -201,7 +207,7 @@ public class WildcardSCMHeadFilterTrait extends SCMSourceTrait {
          */
         @Override
         public String getDisplayName() {
-            return Messages.WildcardSCMHeadFilterTrait_DisplayName();
+            return Messages.WildcardSCMOriginFilterTrait_DisplayName();
         }
     }
 }
