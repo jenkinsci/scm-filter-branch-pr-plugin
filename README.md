@@ -20,6 +20,30 @@ plugin refer to the wiki article [SCM Filter Branch PR Plugin][wiki].
 
 For release notes, please refer to the [CHANGELOG.md](CHANGELOG.md).
 
+# How to compile plugin
+
+Developer environment:
+
+    Ubuntu 18.04.3 LTS
+    Linux 5.3.0-26-generic x86_64
+
+    Apache Maven 3.6.0
+    Maven home: /usr/share/maven
+    Java version: 1.8.0_232, vendor: Private Build, runtime: /usr/lib/jvm/java-8-openjdk-amd64/jre
+    Default locale: en_US, platform encoding: UTF-8
+    OS name: "linux", version: "5.3.0-26-generic", arch: "amd64", family: "unix"
+
+    openjdk version "1.8.0_232"
+    OpenJDK Runtime Environment (build 1.8.0_232-8u232-b09-0ubuntu1~18.04.1-b09)
+    OpenJDK 64-Bit Server VM (build 25.232-b09, mixed mode)
+
+To compile the plugin run the following command.
+
+    mvn clean package
+
+Upload the compiled plugin to Jenkins located at
+`target/scm-filter-branch-pr.hpi`.
+
 # License
 
 ```
