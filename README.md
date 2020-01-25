@@ -1,64 +1,174 @@
-# SCM Filter Branch PR Plugin [![Build # Status][build-icon]][build-link]
+# About SCM Filter Branch PR Plugin
 
-This is a Jenkins plugin.
+This plugin provides wildcard and regex filters for Pipeline Multibranch Plugin
+pipelines.  The filter provides two behaviors beyond the default SCM filter
 
-* Documentation in the [Jenkins wiki][wiki].
-* File issues in [JIRA][jira].
+* It will match branches and pull requests destined for the matched
+  branches.
+* It will match branches and pull requests originating from the matched
+  branches.
 
-This plugin will filter branches in the [Pipeline Multibranch
-Plugin][pmb-plugin] similar to the [SCM API Plugin][sa-plugin].  However, pull
-requests where the destination branch matches a filtered branch will also be
-built.  No the need to define an additional filter for pull requests if using
-this plugin.
+In both of the above scenarios, you can also add additional filters for matching
+tags independently of branches.
 
-This plugin was created to address [JENKINS-47091][JENKINS-47091] where
-[Pipeline Multibranch Plugin][pmb-plugin] does not build GitHub pull requests
-destined for a filtered branch.  For documentation on how to configure this
-plugin refer to the wiki article [SCM Filter Branch PR Plugin][wiki].
+# Setup
 
-# Release Notes
+After installing this plugin four new options will appear in [Pipeline
+Multibranch Plugin][multibranch-pipeline] jobs for configuring branch filters.
+In additional behaviors, click on Add and you'll see the following additional
+filters:
 
-For release notes, please refer to the [CHANGELOG.md](CHANGELOG.md).
+![Screenshot of filter config][screenshot-config]
 
-# How to compile plugin
+Choose only one filter.  The filter will match branches and tags to be built.
+It will also match any pull request destination branch that matches a filtered
+branch to also be built as a pull request by the [Pipeline Multibranch
+Plugin][multibranch-pipline] job.
 
-Developer environment:
+# Configuring tag building
 
-    Ubuntu 18.04.3 LTS
-    Linux 5.3.0-26-generic x86_64
+This plugin supports filtering both for branches, pull requests destined for
+matched branches, **and tags**.  This plugin is meant to satisfy a typical
+tag-based development workflow.  In order to build tags, tag discovery must be
+configured in addition to specifying matching tags.
 
-    Apache Maven 3.6.0
-    Maven home: /usr/share/maven
-    Java version: 1.8.0_232, vendor: Private Build, runtime: /usr/lib/jvm/java-8-openjdk-amd64/jre
-    Default locale: en_US, platform encoding: UTF-8
-    OS name: "linux", version: "5.3.0-26-generic", arch: "amd64", family: "unix"
+Here's a screenshot to filter tags with a regular expression (notice **Discover
+tags** trait).
 
-    openjdk version "1.8.0_232"
-    OpenJDK Runtime Environment (build 1.8.0_232-8u232-b09-0ubuntu1~18.04.1-b09)
-    OpenJDK 64-Bit Server VM (build 25.232-b09, mixed mode)
+![Screenshot of regex config][screenshot-regex]
 
-To compile the plugin run the following command.
+Here's a screenshot to filter tags with wildcards (notice **Discover tags**
+trait).
 
-    mvn clean package
+![Screenshot of wildcards config][screenshot-wildcards]
 
-Upload the compiled plugin to Jenkins located at
-`target/scm-filter-branch-pr.hpi`.
+# What is a PR?
 
-# License
+Matching and building a PR, is what is called a Peer Review build in generic
+terms of SCM.  Depending on the platform you're using it goes by different
+names.  For example, GitHub (for Git) and Mercurial (another SCM) has Pull
+Requests.  GitLab has Merge Requests.  In essence, these are all the same thing.
+This plugin will match branches which are destined for the target branch
+(usually master branch in Git) and build them as part of an automated peer
+review.
 
+# Pipeline scripting for branch build vs PR build vs tag build
+
+In multibranch pipelines, it's not straight forward to tell the difference
+between tags, pull requests, and regular branch builds.  Create a pipeline
+shared library and add the following pipeline variables to it.
+
+* `vars/isTagBuild.groovy`
+* `vars/isPRBuild.groovy`
+
+The source of `vars/isTagBuild.groovy`:
+
+```groovy
+import hudson.model.Job
+import jenkins.scm.api.mixin.TagSCMHead
+import org.jenkinsci.plugins.workflow.multibranch.BranchJobProperty
+
+@NonCPS
+Boolean isTagBuild(Job build_parent) {
+    build_parent.getProperty(BranchJobProperty).branch.head in TagSCMHead
+}
+
+Boolean call() {
+    isTagBuild(currentBuild.rawBuild.parent)
+}
 ```
-The MIT License
 
-Copyright (c) 2017, Sam Gleske - https://github.com/samrocketman
-Copyright (c) 2017, CloudBees, Inc.
+The source of `vars/isPRBuild.groovy`:
+
+```groovy
+import hudson.model.Job
+import jenkins.scm.api.mixin.ChangeRequestSCMHead
+import org.jenkinsci.plugins.workflow.multibranch.BranchJobProperty
+
+@NonCPS
+Boolean isPRBuild(Job build_parent) {
+    build_parent.getProperty(BranchJobProperty).branch.head in ChangeRequestSCMHead
+}
+
+Boolean call() {
+    isPRBuild(currentBuild.rawBuild.parent)
+}
 ```
 
-See [LICENSE.txt](LICENSE.txt)
+Now scripted and declarative pipelines can be written which can detect what
+kind of build is occuring: branch build, tag build, PR build.  Here's some
+example usage in scripted pipeline.
 
-[JENKINS-47091]: https://issues.jenkins-ci.org/browse/JENKINS-47091
-[build-icon]: https://ci.jenkins.io/buildStatus/icon?job=Plugins/scm-filter-branch-pr-plugin/master
-[build-link]: https://ci.jenkins.io/job/Plugins/job/scm-filter-branch-pr-plugin/job/master/
-[jira]: https://issues.jenkins-ci.org/issues/?jql=project%20%3D%20JENKINS%20AND%20component%20%3D%20scm-filter-branch-pr-plugin
-[pmb-plugin]: https://wiki.jenkins.io/display/JENKINS/Pipeline+Multibranch+Plugin
-[sa-plugin]: https://wiki.jenkins.io/display/JENKINS/SCM+API+Plugin
-[wiki]: https://wiki.jenkins.io/display/JENKINS/SCM+Filter+Branch+PR+Plugin
+```groovy
+if(isPRBuild()) {
+    // do something because it is a PR build
+}
+if(isTagBuild()) {
+    // do something because it is a tag build
+}
+if(!isPRBuild() && !isTagBuild()) {
+    // do something only on branch builds and not on PR or tag build
+}
+```
+
+# Shell scripting for main build or PR build
+
+`CHANGE_ID` environment variable is populated for pull requests.  It is not set
+when the triggered build is not a peer review.
+
+### Shell scripting logic for branches vs pull requests
+
+One can modify their build scripts to behave differently if a peer review is
+being built vs a matched branch.  Here's an example in bash:
+
+```bash
+if [ -n "${CHANGE_ID}" ] ; then
+  # do something because it's a pull request
+else
+  # not a pull request
+fi
+```
+
+Additionally, it may be desired that a `Jenkinsfile` not run certain stages
+when evaluating branches vs peer reviews (such as deploys).  This can be
+accomplished two ways.
+
+### Scripted pipeline syntax logic for branches vs pull requests
+
+```groovy
+if(env.CHANGE_ID) {
+  // do something because it's a pull request
+} else {
+  // not a pull request
+}
+```
+
+### Declarative pipeline syntax logic for branches vs pull requests
+
+[Declarative pipelines provide a "when" condition][declarative-when].
+Therefore, similar logic can be applied.  For example, deploy only when not a
+peer review and it is the master branch.
+
+```groovy
+pipeline {
+    stages {
+        stage('Example Deploy') {
+            when {
+                allOf {
+                    environment name: 'CHANGE_ID', value: ''
+                    branch 'master'
+                }
+            }
+            steps {
+                // not a pull request so do something
+            }
+        }
+    }
+}
+```
+
+[declarative-when]: https://jenkins.io/doc/book/pipeline/syntax/#when
+[multibranch-pipline]: https://wiki.jenkins.io/display/JENKINS/Pipeline+Multibranch+Plugin
+[screenshot-config]: https://github.com/jenkinsci/scm-filter-branch-pr-plugin/raw/master/docs/images/screenshot-config.png
+[screenshot-regex]: https://github.com/jenkinsci/scm-filter-branch-pr-plugin/raw/master/docs/images/screenshot-regex.png
+[screenshot-wildcards]: https://github.com/jenkinsci/scm-filter-branch-pr-plugin/raw/master/docs/images/screenshot-wildcards.png
