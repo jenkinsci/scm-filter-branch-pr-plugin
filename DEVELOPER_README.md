@@ -49,7 +49,7 @@ Upload the compiled plugin to Jenkins located at
 ```
 The MIT License
 
-Copyright (c) 2017, Sam Gleske - https://github.com/samrocketman
+Copyright (c) 2017-2020, Sam Gleske - https://github.com/samrocketman
 Copyright (c) 2017, CloudBees, Inc.
 ```
 
