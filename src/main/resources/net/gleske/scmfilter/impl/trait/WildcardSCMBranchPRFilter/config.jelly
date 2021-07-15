@@ -12,6 +12,9 @@
   <f:entry title="${%PR Source}" field="prSource">
     <f:textbox default=""/>
   </f:entry>
+  <f:entry title="${%Tag Include}" field="tagIncludes">
+    <f:textbox default=""/>
+  </f:entry>
   <f:entry title="${%Tag Exclude}" field="tagExcludes">
     <f:textbox default="*"/>
   </f:entry>

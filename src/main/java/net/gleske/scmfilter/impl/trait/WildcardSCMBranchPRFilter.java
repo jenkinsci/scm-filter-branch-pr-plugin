@@ -95,7 +95,7 @@ public class WildcardSCMBranchPRFilter extends SCMSourceTrait {
         this.tagIncludes = "";
         this.tagExcludes = "*";
         this.prSource = "";
-        this.prDestination = "*";
+        this.prDestination = "";
     }
 
     /**
@@ -160,11 +160,12 @@ public class WildcardSCMBranchPRFilter extends SCMSourceTrait {
         context.withPrefilter(new SCMHeadPrefilter() {
             @Override
             public boolean isExcluded(@NonNull SCMSource request, @NonNull SCMHead head) {
-                if (head instanceof ChangeRequestSCMHead2) {
+                if (head instanceof ChangeRequestSCMHead) {
                     head = ((ChangeRequestSCMHead)head).getTarget();
-                    String origin = ((ChangeRequestSCMHead2)head).getOriginName();
-                    return !(Pattern.matches(getPattern(getPRSource()), head.getName())
-                         && Pattern.matches(getPattern(getPRDestination()), origin));
+                    // String origin = ((ChangeRequestSCMHead)head).getOrigin().getName();
+                    // return !(Pattern.matches(getPattern(getPRSource()), head.getName())
+                    //      && Pattern.matches(getPattern(getPRDestination()), origin));
+                    return !Pattern.matches(getPattern(getPRDestination()), head.getName());
                 }
                 else if(head instanceof TagSCMHead) {
                     return !Pattern.matches(getPattern(getTagIncludes()), head.getName())
@@ -172,7 +173,7 @@ public class WildcardSCMBranchPRFilter extends SCMSourceTrait {
                 } else {
                     return !Pattern.matches(getPattern(getIncludes()), head.getName())
                          || Pattern.matches(getPattern(getExcludes()), head.getName());
-                } 
+                }
             }
         });
     }
@@ -215,7 +216,7 @@ public class WildcardSCMBranchPRFilter extends SCMSourceTrait {
          */
         @Override
         public String getDisplayName() {
-            return Messages.WildcardSCMHeadFilterTrait_DisplayName();
+            return Messages.WildcardSCMBranchPRFilter_DisplayName();
         }
     }
 }
