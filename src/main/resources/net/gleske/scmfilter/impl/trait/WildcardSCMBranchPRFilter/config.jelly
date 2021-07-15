@@ -6,10 +6,7 @@
   <f:entry title="${%Branch Exclude}" field="excludes">
     <f:textbox default=""/>
   </f:entry>
-  <f:entry title="${%PR Destination}" field="prDestination">
-    <f:textbox default=""/>
-  </f:entry>
-  <f:entry title="${%PR Source}" field="prSource">
+  <f:entry title="${%PR Destination Branch}" field="prDestination">
     <f:textbox default=""/>
   </f:entry>
   <f:entry title="${%Tag Include}" field="tagIncludes">

@@ -51,12 +51,6 @@ public class WildcardSCMBranchPRFilter extends SCMSourceTrait {
     private final String tagExcludes;
 
     /**
-     * The PR source branch rules.
-     */
-    @NonNull
-    private final String prSource;
-
-    /**
      * The PR destination branch rules.
      */
     @NonNull
@@ -69,16 +63,14 @@ public class WildcardSCMBranchPRFilter extends SCMSourceTrait {
      * @param excludes the branch exclude rules.
      * @param tagIncludes the tag include rules.
      * @param tagExcludes the tag exclude rules.
-     * @param prSource the tag exclude rules.
      * @param prDestination the tag exclude rules.
      */
     @DataBoundConstructor
-    public WildcardSCMBranchPRFilter(@CheckForNull String includes, String excludes, String tagIncludes, String tagExcludes, String prSource, String prDestination) {
+    public WildcardSCMBranchPRFilter(@CheckForNull String includes, String excludes, String tagIncludes, String tagExcludes, String prDestination) {
         this.includes = StringUtils.defaultIfBlank(includes, "*");
         this.excludes = StringUtils.defaultIfBlank(excludes, "");
         this.tagIncludes = StringUtils.defaultIfBlank(tagIncludes, "");
         this.tagExcludes = StringUtils.defaultIfBlank(tagExcludes, "");
-        this.prSource = StringUtils.defaultIfBlank(prSource, "");
         this.prDestination = StringUtils.defaultIfBlank(prDestination, "");
     }
 
@@ -94,8 +86,7 @@ public class WildcardSCMBranchPRFilter extends SCMSourceTrait {
         this.excludes = StringUtils.defaultIfBlank(excludes, "");
         this.tagIncludes = "";
         this.tagExcludes = "*";
-        this.prSource = "";
-        this.prDestination = "";
+        this.prDestination = "development";
     }
 
     /**
@@ -135,21 +126,12 @@ public class WildcardSCMBranchPRFilter extends SCMSourceTrait {
     }
 
     /**
-     * Returns the pr source rules
-     * 
-     * @return the pr source rules
-     */
-    public String getPRSource() {
-        return  prSource;
-    }
-
-    /**
      * Returns the pr destination rules
      * 
      * @return the pr destination rules
      */
-    public String getPRDestination() {
-        return  prDestination;
+    public String getPrDestination() {
+        return prDestination;
     }
 
     /**
@@ -162,10 +144,7 @@ public class WildcardSCMBranchPRFilter extends SCMSourceTrait {
             public boolean isExcluded(@NonNull SCMSource request, @NonNull SCMHead head) {
                 if (head instanceof ChangeRequestSCMHead) {
                     head = ((ChangeRequestSCMHead)head).getTarget();
-                    // String origin = ((ChangeRequestSCMHead)head).getOrigin().getName();
-                    // return !(Pattern.matches(getPattern(getPRSource()), head.getName())
-                    //      && Pattern.matches(getPattern(getPRDestination()), origin));
-                    return !Pattern.matches(getPattern(getPRDestination()), head.getName());
+                    return !Pattern.matches(getPattern(getPrDestination()), head.getName());
                 }
                 else if(head instanceof TagSCMHead) {
                     return !Pattern.matches(getPattern(getTagIncludes()), head.getName())
