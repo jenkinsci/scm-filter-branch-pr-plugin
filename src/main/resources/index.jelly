@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
 <div>
     This plugin provides wildcard and regex filters for multibranch pipelines
-    which include matching the destination branch of PRs with the filters.
+    which include matching the branches, pull requests and tags.
 </div>
