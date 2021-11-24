@@ -53,7 +53,7 @@ import jenkins.scm.impl.trait.Selection;
  *
  * @since 0.1
  */
-public class RegexSCMFilterBranchTrait extends SCMSourceTrait {
+public class RegexSCMBranchFilterTrait extends SCMSourceTrait {
 
     /**
      * The branch regular expression.
@@ -71,7 +71,7 @@ public class RegexSCMFilterBranchTrait extends SCMSourceTrait {
      * @param branchRegex The branch regular expression
      */
     @DataBoundConstructor
-    public RegexSCMFilterBranchTrait(String branchRegex) {
+    public RegexSCMBranchFilterTrait(String branchRegex) {
         this.branchRegex = branchRegex;
         this.branchPattern = Pattern.compile(branchRegex);
     }
@@ -125,7 +125,7 @@ public class RegexSCMFilterBranchTrait extends SCMSourceTrait {
          */
         @Override
         public String getDisplayName() {
-            return Messages.RegexSCMFilterBranchTrait_DisplayName();
+            return Messages.RegexSCMBranchFilterTrait_DisplayName();
         }
         
         /**

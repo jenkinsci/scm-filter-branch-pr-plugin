@@ -51,7 +51,7 @@ import jenkins.scm.impl.trait.Selection;
  *
  * @since 0.1
  */
-public class RegexSCMFilterTagTrait extends SCMSourceTrait {
+public class RegexSCMTagFilterTrait extends SCMSourceTrait {
 
     /**
      * The tag regular expression.
@@ -69,7 +69,7 @@ public class RegexSCMFilterTagTrait extends SCMSourceTrait {
      * @param tagRegex The tag regular expression
      */
     @DataBoundConstructor
-    public RegexSCMFilterTagTrait(String tagRegex) {
+    public RegexSCMTagFilterTrait(String tagRegex) {
         this.tagRegex = tagRegex;
         this.tagPattern = Pattern.compile(tagRegex);
     }
@@ -124,7 +124,7 @@ public class RegexSCMFilterTagTrait extends SCMSourceTrait {
          */
         @Override
         public String getDisplayName() {
-            return Messages.RegexSCMFilterTagTrait_DisplayName();
+            return Messages.RegexSCMTagFilterTrait_DisplayName();
         }
         
         /**

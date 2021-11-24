@@ -2,7 +2,7 @@
  * The MIT License
  *
  * Copyright (c) 2017, CloudBees, Inc.
- * Copyright (c) 2017, Sam Gleske - https://github.com/samrocketman
+ * Copyright (c) 2017-2020, Sam Gleske - https://github.com/samrocketman
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,9 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import jenkins.scm.api.SCMHead;
 import jenkins.scm.api.SCMSource;
+import jenkins.scm.api.mixin.ChangeRequestSCMHead2;
 import jenkins.scm.api.mixin.ChangeRequestSCMHead;
+import jenkins.scm.api.mixin.TagSCMHead;
 import jenkins.scm.api.trait.SCMHeadPrefilter;
 import jenkins.scm.api.trait.SCMSourceContext;
 import jenkins.scm.api.trait.SCMSourceTrait;
@@ -44,57 +46,56 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
 /**
- * Decorates a {@link SCMSource} with a {@link SCMHeadPrefilter} that excludes
- * {@link SCMHead} instances with names that do not match a user supplied
- * regular expression.
+ * Decorates a {@link SCMSource} with a {@link SCMHeadPrefilter} that excludes {@link SCMHead} instances with names that
+ * do not match a user supplied regular expression.
  *
- * @since 0.1
+ * @since 0.5
  */
-public class RegexSCMFilterPullRequestDestinationTrait extends SCMSourceTrait {
+public class RegexSCMPROriginFilterTrait extends SCMSourceTrait {
 
     /**
-     * The pull request destination branch regular expression.
+     * The pull request origin branch regular expression.
      */
-    private final String prDestinationRegex;
-
+    private final String prOriginRegex;
+    
     /**
-     * The compiled pull request destination branch {@link Pattern}.
+     * The compiled pull request origin branch {@link Pattern}.
      */
-    private transient Pattern prDestinationPattern;
-
+    private transient Pattern prOriginPattern;
+    
     /**
      * Stapler constructor.
      *
-     * @param prDestinationRegex The pull request destination branch regular expression
+     * prOriginRegex The pull request origin branch regular expression
      */
     @DataBoundConstructor
-    public RegexSCMFilterPullRequestDestinationTrait(String prDestinationRegex) {
-        prDestinationPattern = Pattern.compile(prDestinationRegex);
-        this.prDestinationRegex = prDestinationRegex;
+    public RegexSCMPROriginFilterTrait( String prOriginRegex) {
+        prOriginPattern = Pattern.compile(prOriginRegex);
+        this.prOriginRegex = prOriginRegex;
     }
 
     /**
-     * Gets the pull request destination branch regular expression.
+     * Gets the pull request origin branch regular expression.
      *
-     * @return the pull request destination branch branch regular expression.
+     * @return the pull request origin branch regular expression.
      */
-    public String getPrDestinationRegex() {
-        return prDestinationRegex;
+    public String getPrOriginRegex() {
+        return prOriginRegex;
     }
-
+    
     /**
-     * Gets the compiled pull request destination branch pattern.
+     * Gets the compiled pull request origin branch pattern.
      *
-     * @return the compiled pull request destination branch pattern.
+     * @return the compiled pull request origin branch pattern.
      */
-    public Pattern getPrDestinationPattern() {
-        if (prDestinationPattern == null) {
+    public Pattern getPrOriginPattern() {
+        if (prOriginPattern == null) {
             // idempotent
-            prDestinationPattern = Pattern.compile(prDestinationRegex);
+            prOriginPattern = Pattern.compile(prOriginRegex);
         }
-        return prDestinationPattern;
+        return prOriginPattern;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -103,12 +104,12 @@ public class RegexSCMFilterPullRequestDestinationTrait extends SCMSourceTrait {
         context.withPrefilter(new SCMHeadPrefilter() {
             @Override
             public boolean isExcluded(SCMSource source, SCMHead head) {
-                if (head instanceof ChangeRequestSCMHead) {
-                    // Change request destined to targetName branches
-                    String targetName = ((ChangeRequestSCMHead) head).getTarget().getName();
-                    return !getPrDestinationPattern().matcher(targetName).matches();
+                if (head instanceof ChangeRequestSCMHead2) {
+                    // Change request originating from origin branches
+                    String origin = ((ChangeRequestSCMHead2) head).getOriginName();
+                    return !getPrOriginPattern().matcher(origin).matches();
                 }
-
+                
                 return false;
             }
         });
@@ -117,7 +118,7 @@ public class RegexSCMFilterPullRequestDestinationTrait extends SCMSourceTrait {
     /**
      * Our descriptor.
      */
-    @Symbol("RegexFilterPRDestination")
+    @Symbol("RegexSCMPROriginFilter")
     @Extension
     @Selection
     public static class DescriptorImpl extends SCMSourceTraitDescriptor {
@@ -127,7 +128,7 @@ public class RegexSCMFilterPullRequestDestinationTrait extends SCMSourceTrait {
          */
         @Override
         public String getDisplayName() {
-            return Messages.RegexSCMFilterPullRequestDestinationTrait_DisplayName();
+            return Messages.RegexSCMPROriginFilterTrait_DisplayName();
         }
 
         /**
