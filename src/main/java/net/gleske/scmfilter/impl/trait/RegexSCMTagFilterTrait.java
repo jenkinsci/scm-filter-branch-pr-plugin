@@ -46,8 +46,9 @@ import jenkins.scm.api.trait.SCMSourceTraitDescriptor;
 import jenkins.scm.impl.trait.Selection;
 
 /**
- * Decorates a {@link SCMSource} with a {@link SCMHeadPrefilter} that excludes {@link SCMHead} instances with names that
- * do not match a user supplied regular expression.
+ * Decorates a {@link SCMSource} with a {@link SCMHeadPrefilter} that excludes
+ * {@link SCMHead} instances with names that do not match a user supplied
+ * regular expression.
  *
  * @since 0.1
  */
@@ -73,7 +74,7 @@ public class RegexSCMTagFilterTrait extends SCMSourceTrait {
         this.tagRegex = tagRegex;
         this.tagPattern = Pattern.compile(tagRegex);
     }
-    
+
     /**
      * Gets the tag regular expression.
      *
@@ -108,7 +109,7 @@ public class RegexSCMTagFilterTrait extends SCMSourceTrait {
                     // tag
                     return !getTagPattern().matcher(head.getName()).matches();
                 }
-                
+
                 return false;
             }
         });
@@ -126,7 +127,7 @@ public class RegexSCMTagFilterTrait extends SCMSourceTrait {
         public String getDisplayName() {
             return Messages.RegexSCMTagFilterTrait_DisplayName();
         }
-        
+
         /**
          * Form validation for the regular expression.
          *

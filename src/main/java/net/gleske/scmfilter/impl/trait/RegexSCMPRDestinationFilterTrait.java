@@ -65,7 +65,8 @@ public class RegexSCMPRDestinationFilterTrait extends SCMSourceTrait {
     /**
      * Stapler constructor.
      *
-     * @param prDestinationRegex The pull request destination branch regular expression
+     * @param prDestinationRegex The pull request destination branch regular
+     *                           expression
      */
     @DataBoundConstructor
     public RegexSCMPRDestinationFilterTrait(String prDestinationRegex) {

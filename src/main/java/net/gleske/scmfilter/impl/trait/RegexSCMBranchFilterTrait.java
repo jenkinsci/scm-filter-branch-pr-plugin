@@ -48,8 +48,9 @@ import jenkins.scm.api.trait.SCMSourceTraitDescriptor;
 import jenkins.scm.impl.trait.Selection;
 
 /**
- * Decorates a {@link SCMSource} with a {@link SCMHeadPrefilter} that excludes {@link SCMHead} instances with names that
- * do not match a user supplied regular expression.
+ * Decorates a {@link SCMSource} with a {@link SCMHeadPrefilter} that excludes
+ * {@link SCMHead} instances with names that do not match a user supplied
+ * regular expression.
  *
  * @since 0.1
  */
@@ -75,7 +76,7 @@ public class RegexSCMBranchFilterTrait extends SCMSourceTrait {
         this.branchRegex = branchRegex;
         this.branchPattern = Pattern.compile(branchRegex);
     }
-    
+
     /**
      * Gets the branch regular expression.
      *
@@ -106,10 +107,11 @@ public class RegexSCMBranchFilterTrait extends SCMSourceTrait {
         context.withPrefilter(new SCMHeadPrefilter() {
             @Override
             public boolean isExcluded(SCMSource source, SCMHead head) {
-                if (!(head instanceof TagSCMHead || head instanceof ChangeRequestSCMHead || head instanceof ChangeRequestSCMHead2)) {
+                if (!(head instanceof TagSCMHead || head instanceof ChangeRequestSCMHead
+                        || head instanceof ChangeRequestSCMHead2)) {
                     return !getBranchPattern().matcher(head.getName()).matches();
                 }
-                
+
                 return false;
             }
         });
@@ -127,7 +129,7 @@ public class RegexSCMBranchFilterTrait extends SCMSourceTrait {
         public String getDisplayName() {
             return Messages.RegexSCMBranchFilterTrait_DisplayName();
         }
-        
+
         /**
          * Form validation for the regular expression.
          *

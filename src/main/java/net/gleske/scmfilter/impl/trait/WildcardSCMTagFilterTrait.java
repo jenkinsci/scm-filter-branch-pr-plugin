@@ -26,9 +26,7 @@
 package net.gleske.scmfilter.impl.trait;
 
 import hudson.Extension;
-import hudson.util.FormValidation;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 import jenkins.scm.api.SCMHead;
 import jenkins.scm.api.SCMSource;
 import jenkins.scm.api.mixin.ChangeRequestSCMHead2;
@@ -39,62 +37,56 @@ import jenkins.scm.api.trait.SCMSourceContext;
 import jenkins.scm.api.trait.SCMSourceTrait;
 import jenkins.scm.api.trait.SCMSourceTraitDescriptor;
 import jenkins.scm.impl.trait.Selection;
+import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
 
 /**
- * Decorates a {@link SCMSource} with a {@link SCMHeadPrefilter} that excludes
- * {@link SCMHead} instances with names that do not match a user supplied
- * regular expression.
+ * Decorates a {@link SCMSource} with a {@link SCMHeadPrefilter} that filters
+ * {@link SCMHead} instances based on matching wildcard include/exclude rules.
  *
  * @since 0.5
  */
-public class RegexSCMPROriginFilterTrait extends SCMSourceTrait {
+public class WildcardSCMTagFilterTrait extends SCMSourceTrait {
 
     /**
-     * The pull request origin branch regular expression.
+     * The tag include rules.
      */
-    private final String prOriginRegex;
+    private final String tagIncludes;
 
     /**
-     * The compiled pull request origin branch {@link Pattern}.
+     * The tag exclude rules.
      */
-    private transient Pattern prOriginPattern;
+    private final String tagExcludes;
 
     /**
      * Stapler constructor.
      *
-     * prOriginRegex The pull request origin branch regular expression
+     * @param tagIncludes the tag include rules
+     * @param tagExcludes the tag exclude rules
      */
     @DataBoundConstructor
-    public RegexSCMPROriginFilterTrait(String prOriginRegex) {
-        prOriginPattern = Pattern.compile(prOriginRegex);
-        this.prOriginRegex = prOriginRegex;
+    public WildcardSCMTagFilterTrait(String tagIncludes, String tagExcludes) {
+        this.tagIncludes = StringUtils.defaultIfBlank(tagIncludes, "");
+        this.tagExcludes = StringUtils.defaultIfBlank(tagExcludes, "");
     }
 
     /**
-     * Gets the pull request origin branch regular expression.
+     * Returns the tag include rules.
      *
-     * @return the pull request origin branch regular expression.
+     * @return the tag include rules.
      */
-    public String getPrOriginRegex() {
-        return prOriginRegex;
+    public String getTagIncludes() {
+        return tagIncludes;
     }
 
     /**
-     * Gets the compiled pull request origin branch pattern.
+     * Returns the tag exclude rules.
      *
-     * @return the compiled pull request origin branch pattern.
+     * @return the tag exclude rules.
      */
-    public Pattern getPrOriginPattern() {
-        if (prOriginPattern == null) {
-            // idempotent
-            prOriginPattern = Pattern.compile(prOriginRegex);
-        }
-        return prOriginPattern;
+    public String getTagExcludes() {
+        return tagExcludes;
     }
 
     /**
@@ -104,11 +96,11 @@ public class RegexSCMPROriginFilterTrait extends SCMSourceTrait {
     protected void decorateContext(SCMSourceContext<?, ?> context) {
         context.withPrefilter(new SCMHeadPrefilter() {
             @Override
-            public boolean isExcluded(SCMSource source, SCMHead head) {
-                if (head instanceof ChangeRequestSCMHead2) {
-                    // Change request originating from origin branches
-                    String origin = ((ChangeRequestSCMHead2) head).getOriginName();
-                    return !getPrOriginPattern().matcher(origin).matches();
+            public boolean isExcluded(SCMSource request, SCMHead head) {
+                if (head instanceof TagSCMHead) {
+                    // tag
+                    return !Pattern.matches(getPattern(getTagIncludes()), head.getName())
+                            || Pattern.matches(getPattern(getTagExcludes()), head.getName());
                 }
 
                 return false;
@@ -117,9 +109,34 @@ public class RegexSCMPROriginFilterTrait extends SCMSourceTrait {
     }
 
     /**
+     * Returns the pattern corresponding to the branches containing wildcards.
+     *
+     * @param branches the names of branches to create a pattern for
+     * @return pattern corresponding to the branches containing wildcards
+     */
+    private String getPattern(String branches) {
+        StringBuilder quotedBranches = new StringBuilder();
+        for (String wildcard : branches.split(" ")) {
+            StringBuilder quotedBranch = new StringBuilder();
+            for (String branch : wildcard.split("(?=[*])|(?<=[*])")) {
+                if (branch.equals("*")) {
+                    quotedBranch.append(".*");
+                } else if (!branch.isEmpty()) {
+                    quotedBranch.append(Pattern.quote(branch));
+                }
+            }
+            if (quotedBranches.length() > 0) {
+                quotedBranches.append("|");
+            }
+            quotedBranches.append(quotedBranch);
+        }
+        return quotedBranches.toString();
+    }
+
+    /**
      * Our descriptor.
      */
-    @Symbol("RegexSCMPROriginFilter")
+    @Symbol("WildcardSCMTagFilter")
     @Extension
     @Selection
     public static class DescriptorImpl extends SCMSourceTraitDescriptor {
@@ -129,23 +146,7 @@ public class RegexSCMPROriginFilterTrait extends SCMSourceTrait {
          */
         @Override
         public String getDisplayName() {
-            return Messages.RegexSCMPROriginFilterTrait_DisplayName();
-        }
-
-        /**
-         * Form validation for the regular expression.
-         *
-         * @param value the regular expression.
-         * @return the validation results.
-         */
-        @Restricted(NoExternalUse.class) // stapler
-        public FormValidation doCheckRegex(@QueryParameter String value) {
-            try {
-                Pattern.compile(value);
-                return FormValidation.ok();
-            } catch (PatternSyntaxException e) {
-                return FormValidation.error(e.getMessage());
-            }
+            return Messages.WildcardSCMTagFilterTrait_DisplayName();
         }
     }
 }
