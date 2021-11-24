@@ -13,21 +13,19 @@ tags independently of branches.
 
 # Setup
 
-After installing this plugin two new options will appear in [Pipeline
+After installing this plugin eight new options will appear in [Pipeline
 Multibranch Plugin][multibranch-pipeline] jobs for configuring branch/tag/pull request filters.
 In additional behaviors, click on Add and you'll see the following additional
 filters:
 
 ![Screenshot of filter config][screenshot-config]
 
-Choose only one filter.  The filter will match branches and tags to be built.
-It will also match any pull request orgin branch or destination branch that matches a filter 
-to also be built as a pull request by the [Pipeline Multibranch
+Choose the required filters.  The filters will match branches, tags and pull requests to be built by [Pipeline Multibranch
 Plugin][multibranch-pipeline] job.
 
 # Configuring tag building
 
-This plugin supports filtering both for branches, pull requests originated or destined for
+This plugin supports filtering for branches, pull requests originated or destined for
 matched branches, **and tags**.  This plugin is meant to satisfy a typical
 tag-based development workflow.  In order to build tags, tag discovery must be
 configured in addition to specifying matching tags.
