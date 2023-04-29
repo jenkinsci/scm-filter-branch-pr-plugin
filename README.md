@@ -1,5 +1,11 @@
 # About SCM Filter Branch PR Plugin
 
+[![Build Status](https://ci.jenkins.io/job/Plugins/job/scm-filter-branch-pr-plugin/job/main/badge/icon)](https://ci.jenkins.io/job/Plugins/job/scm-filter-branch-pr-plugin/job/main/)
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/scm-filter-branch-pr.svg)](https://plugins.jenkins.io/scm-filter-branch-pr)
+[![GitHub release](https://img.shields.io/github/release/jenkinsci/scm-filter-branch-pr-plugin.svg?label=changelog)](https://github.com/jenkinsci/scm-filter-branch-pr-plugin/releases/latest)
+[![GitHub license](https://img.shields.io/github/license/jenkinsci/scm-filter-branch-pr-plugin)](https://github.com/jenkinsci/scm-filter-branch-pr-plugin/blob/master/LICENSE.md)
+[![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/scm-filter-branch-pr.svg?color=blue)](https://plugins.jenkins.io/scm-filter-branch-pr)
+
 This plugin provides wildcard and regex filters for Pipeline Multibranch Plugin
 pipelines.  The filter provides two behaviors beyond the default SCM filter
 
@@ -49,7 +55,7 @@ terms of SCM.  Depending on the platform you're using it goes by different
 names.  For example, GitHub (for Git) and Mercurial (another SCM) has Pull
 Requests.  GitLab has Merge Requests.  In essence, these are all the same thing.
 This plugin will match branches which are destined for the target branch
-(usually master branch in Git) and build them as part of an automated peer
+(usually main branch in Git) and build them as part of an automated peer
 review.
 
 # Pipeline scripting for branch build vs PR build vs tag build
@@ -147,7 +153,7 @@ if(env.CHANGE_ID) {
 
 [Declarative pipelines provide a "when" condition][declarative-when].
 Therefore, similar logic can be applied.  For example, deploy only when not a
-peer review and it is the master branch.
+peer review and it is the main branch.
 
 ```groovy
 pipeline {
@@ -156,7 +162,7 @@ pipeline {
             when {
                 allOf {
                     environment name: 'CHANGE_ID', value: ''
-                    branch 'master'
+                    branch 'main'
                 }
             }
             steps {
@@ -169,6 +175,6 @@ pipeline {
 
 [declarative-when]: https://jenkins.io/doc/book/pipeline/syntax/#when
 [multibranch-pipeline]: https://wiki.jenkins.io/display/JENKINS/Pipeline+Multibranch+Plugin
-[screenshot-config]: https://github.com/jenkinsci/scm-filter-branch-pr-plugin/raw/master/docs/images/screenshot-config.png
-[screenshot-regex]: https://github.com/jenkinsci/scm-filter-branch-pr-plugin/raw/master/docs/images/screenshot-regex.png
-[screenshot-wildcards]: https://github.com/jenkinsci/scm-filter-branch-pr-plugin/raw/master/docs/images/screenshot-wildcards.png
+[screenshot-config]: https://github.com/jenkinsci/scm-filter-branch-pr-plugin/raw/main/docs/images/screenshot-config.png
+[screenshot-regex]: https://github.com/jenkinsci/scm-filter-branch-pr-plugin/raw/main/docs/images/screenshot-regex.png
+[screenshot-wildcards]: https://github.com/jenkinsci/scm-filter-branch-pr-plugin/raw/main/docs/images/screenshot-wildcards.png
