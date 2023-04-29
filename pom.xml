@@ -12,7 +12,7 @@
     </parent>
 
     <artifactId>scm-filter-branch-pr</artifactId>
-    <version>${revision}${changelist}</version>
+    <version>${changelist}</version>
     <packaging>hpi</packaging>
 
     <name>SCM Filter Branch PR Plugin</name>
@@ -40,8 +40,7 @@
     </scm>
 
     <properties>
-        <revision>0.6</revision>
-        <changelist>-SNAPSHOT</changelist>
+        <changelist>999999-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/scm-filter-branch-pr-plugin</gitHubRepo>
         <jenkins.version>2.361.4</jenkins.version>
     </properties>
