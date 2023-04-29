@@ -1,3 +1,5 @@
+Changelog is now published on GitHub releases
+
 # 0.5.1 (Jan 25th, 2020)
 
 - No code changes.
