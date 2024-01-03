@@ -1,6 +1,8 @@
 # About SCM Filter Branch PR Plugin
 
 [![Build Status](https://ci.jenkins.io/job/Plugins/job/scm-filter-branch-pr-plugin/job/main/badge/icon)](https://ci.jenkins.io/job/Plugins/job/scm-filter-branch-pr-plugin/job/main/)
+[![Coverage](https://ci.jenkins.io/job/Plugins/job/scm-filter-branch-pr-plugin/job/main/badge/icon?status=${instructionCoverage}&subject=coverage&color=${colorInstructionCoverage})](https://ci.jenkins.io/job/Plugins/job/scm-filter-branch-pr-plugin/job/main)
+[![LOC](https://ci.jenkins.io/job/Plugins/job/scm-filter-branch-pr-plugin/job/main/badge/icon?job=test&status=${lineOfCode}&subject=line%20of%20code&color=blue)](https://ci.jenkins.io/job/Plugins/job/scm-filter-branch-pr-plugin/job/main)
 [![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/scm-filter-branch-pr.svg)](https://plugins.jenkins.io/scm-filter-branch-pr)
 [![GitHub release](https://img.shields.io/github/release/jenkinsci/scm-filter-branch-pr-plugin.svg?label=changelog)](https://github.com/jenkinsci/scm-filter-branch-pr-plugin/releases/latest)
 [![GitHub license](https://img.shields.io/github/license/jenkinsci/scm-filter-branch-pr-plugin)](https://github.com/jenkinsci/scm-filter-branch-pr-plugin/blob/master/LICENSE.md)
