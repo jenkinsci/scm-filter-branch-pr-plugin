@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>plugin</artifactId>
-        <version>5.2102.v5f5fe09fccf1</version>
+        <version>6.2111.v8b_6a_1d599df3</version>
         <relativePath />
     </parent>
 
@@ -25,13 +25,6 @@
         </license>
     </licenses>
 
-    <developers>
-        <developer>
-            <id>sag47</id>
-            <name>Sam Gleske</name>
-        </developer>
-    </developers>
-
     <scm>
         <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
         <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
@@ -43,8 +36,8 @@
         <changelist>999999-SNAPSHOT</changelist>
         <gitHubRepo>jenkinsci/scm-filter-branch-pr-plugin</gitHubRepo>
         <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
-        <jenkins.baseline>2.479</jenkins.baseline>
-        <jenkins.version>${jenkins.baseline}.1</jenkins.version>
+        <jenkins.baseline>2.516</jenkins.baseline>
+        <jenkins.version>${jenkins.baseline}.3</jenkins.version>
         <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
     </properties>
     <dependencyManagement>
@@ -52,13 +45,17 @@
             <dependency>
                 <groupId>io.jenkins.tools.bom</groupId>
                 <artifactId>bom-${jenkins.baseline}.x</artifactId>
-                <version>5054.v620b_5d2b_d5e6</version>
+                <version>5888.vd99c2b_38128d</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>commons-lang3-api</artifactId>
+    </dependency>
         <dependency>
             <groupId>org.jenkins-ci.plugins</groupId>
             <artifactId>scm-api</artifactId>
